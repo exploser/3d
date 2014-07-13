@@ -21,20 +21,30 @@ void update(GLFWwindow* window, int width, int height)
 	//glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 }
 
-void draw(GLFWwindow* window)
+void drawAxes(GLFWwindow* window)
 {
-	//glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
+	
+	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glRotatef((float) glfwGetTime() * 50.f, 0, 1.f, 0);
-
 	glBegin(GL_LINES); // draw axes
+	glColor3f (1, 1, 1);
 	glVertex3f(0,0,0); glVertex3f(1,0,0);
 	glVertex3f(0,0,0); glVertex3f(0,1,0);
 	glVertex3f(0,0,0); glVertex3f(0,0,1);
 	glEnd();
+	
+	glPopMatrix();
+}
+
+void drawMichael(GLFWwindow* window)
+{
+	glPushMatrix(); // independent rotation!
+	//glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glRotatef((float) glfwGetTime() * 30.f, 0, 1.f, 0);
 
 	glBegin(GL_TRIANGLE_FAN); // draw Michael's silhouette
 	glColor3f (1, 1, 1);
@@ -103,16 +113,43 @@ void draw(GLFWwindow* window)
 	glVertex3f(4.42f,-2.46+5,0);
 	glVertex3f(4.41f,-2.41+5,0);
 	glEnd();
-	/*
-	glBegin(GL_QUADS); 
-        glVertex3f( 0, 0,  20);
-        glVertex3f( 0, 50,  20);
-        glVertex3f( 0, 50, -20);
-        glVertex3f( 0, 0, -20);
-    glEnd();
-	*/
-	glfwSwapBuffers(window);
-	glfwPollEvents();
+
+	glBegin(GL_LINE_STRIP); // eyelid
+	glColor3f (.1f, .1f, .1f);
+	glVertex3f(3.04f,-3.07+5,0);
+	glVertex3f(3.14f,-2.94+5,0);
+	glVertex3f(3.27f,-2.90+5,0);
+	glVertex3f(3.46f,-2.93+5,0);
+	glVertex3f(3.56f,-2.89+5,0);
+	glVertex3f(3.43f,-3.05+5,0);
+	glVertex3f(3.32f,-3.08+5,0);
+	glVertex3f(3.20f,-3.07+5,0);
+	glVertex3f(3.12f,-3.08+5,0);
+	glEnd();
+
+	glBegin(GL_TRIANGLE_FAN); // eye
+	glColor3f (.1f, .1f, .1f);
+	glVertex3f(3.25f,-2.90+5,0);
+	glVertex3f(3.31f,-2.97+5,0);
+	glVertex3f(3.31f,-3.08+5,0);
+	glVertex3f(3.18f,-3.06+5,0);
+	glVertex3f(3.15f,-3.01+5,0);
+	glVertex3f(3.16f,-2.92+5,0);
+	glEnd();
+
+	glBegin(GL_TRIANGLE_FAN); // lips
+	glColor3f(0.8823, 0.702, 0.745);
+	glVertex3f(3.51f,-4.31+5,0);
+	glVertex3f(3.03f,-4.36+5,0);
+	glVertex3f(2.91f,-4.26+5,0);
+	glVertex3f(3.46f,-4.18+5,0);
+	glVertex3f(3.56f,-4.33+5,0);
+	glVertex3f(3.22f,-4.72+5,0);
+	glVertex3f(3.05f,-4.74+5,0);
+	glVertex3f(3.00f,-4.57+5,0);
+	glEnd();
+
+	glPopMatrix();
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -140,8 +177,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	while (!glfwWindowShouldClose(window))
 	{
-		draw(window);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		drawAxes(window);
+		drawMichael(window);
 		
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 	printf("end");
 }
