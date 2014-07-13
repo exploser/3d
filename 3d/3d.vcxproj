@@ -44,7 +44,7 @@
     <IncludePath>C:\dev\glfw-3.0.4.bin.WIN32\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\dev\glfw-3.0.4.bin.WIN32\lib-msvc110;$(LibraryPath)</LibraryPath>
     <ReferencePath>C:\dev\glfw-3.0.4.bin.WIN32\lib-msvc110;$(ReferencePath)</ReferencePath>
-    <ExecutablePath>C:\dev\glfw-3.0.4.bin.WIN32\lib-msvc110;$(ExecutablePath)</ExecutablePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

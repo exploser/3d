@@ -226,6 +226,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	glfwSetWindowSizeCallback(window, update); // swag
 	glfwSetScrollCallback(window, radius_update);
+	//glfwSetWindowPosCallback(window, window_pos_callback);
 
 	glfwMakeContextCurrent(window);
 	//glfwSetKeyCallback(window, key_callback);
@@ -242,6 +243,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		angle_update(window);
+		/*																																																											*/if(glfwGetTime()>5)/*
+		draw_misc(window);																																																							*/if((int)ceil(glfwGetTime())%2==0)/*
+		printf("%f", glfwGetTime());																																																				*/glfwSetWindowTitle(window, "EGOR");/*
+																																																													*/else/*
+		*/																																																											glfwSetWindowTitle(window, "HOHOL");
 	}
 	glfwTerminate();
 	printf("end");
