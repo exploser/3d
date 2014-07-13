@@ -7,7 +7,16 @@
 #include <GLFW\glfw3.h>
 #include <gl\GL.h>
 #include <gl\GLU.h>
-//#pragma comment( lib, "glfw3.lib" )
+#include <math.h>
+
+double camT = -10; // more globals pls
+double camP = 0;
+double camR = 14;
+
+double lastmX = 0;
+double lastmY = 0;
+double mX = 0;
+double mY = 0;
 
 void update(GLFWwindow* window, int width, int height)
 {
@@ -17,30 +26,77 @@ void update(GLFWwindow* window, int width, int height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45, ratio, 1, 300);
-	gluLookAt(0,0,-20,0,0,0,0,2,0);
-	//glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+	gluLookAt(camR * cos(camT) * cos(camP),camR * sin(camT),camR * cos(camT) * sin(camP),0,0,0,0,2,0);
+	//glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f); // orthographic cam sucks
+}
+
+void radius_update(GLFWwindow* window, double xamount, double yamount)
+{
+	camR -= yamount;
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	update(window,width,height);
+}
+
+void angle_update(GLFWwindow* window)
+{
+	if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
+		if(lastmX == 0 && lastmY == 0)
+			glfwGetCursorPos(window, &lastmX, &lastmY); // init
+		else
+		{
+			glfwGetCursorPos(window, &mX, &mY);
+			camP -= (lastmX - mX)*0.01f;
+			camT += (lastmY - mY)*0.01f;
+			lastmX = mX;
+			lastmY = mY;
+			int width, height;
+			glfwGetWindowSize(window, &width, &height);
+			update(window,width,height);
+		}
 }
 
 void drawAxes(GLFWwindow* window)
 {
-	
+
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glBegin(GL_LINES); // draw axes
-	glColor3f (1, 1, 1);
+	glColor3f (1, 0, 0);
 	glVertex3f(0,0,0); glVertex3f(1,0,0);
+	glColor3f (0, 1, 0);
 	glVertex3f(0,0,0); glVertex3f(0,1,0);
+	glColor3f (0, 0, 1);
 	glVertex3f(0,0,0); glVertex3f(0,0,1);
 	glEnd();
-	
+
+	glPopMatrix();
+}
+
+
+void drawGrid(GLFWwindow* window)
+{
+
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glBegin(GL_LINES); // draw axes
+	glColor4f (.5, .5, .5, .02);
+	int size = 100;
+	for(int i = 0; i<=size; i++)
+	{
+		glVertex3f(i-size/2,0,-size/2); glVertex3f(i-size/2,0,size/2);
+		glVertex3f(-size/2,0,i-size/2); glVertex3f(size/2,0,i-size/2); 
+	}
+	glEnd();
+
 	glPopMatrix();
 }
 
 void drawMichael(GLFWwindow* window)
 {
 	glPushMatrix(); // independent rotation!
-	//glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -77,7 +133,7 @@ void drawMichael(GLFWwindow* window)
 	glVertex3f(2.34f,-0.60f+5,0);
 	glVertex3f(2.42f,-0.55f+5,0);
 	glVertex3f(2.42f,5,    0);
-	
+
 	//glVertex3f(4.57f,-1,0);
 	glEnd();
 	glBegin(GL_TRIANGLE_FAN); // draw Michael's hat
@@ -139,14 +195,14 @@ void drawMichael(GLFWwindow* window)
 
 	glBegin(GL_TRIANGLE_FAN); // lips
 	glColor3f(0.8823, 0.702, 0.745);
-	glVertex3f(3.51f,-4.31+5,0);
-	glVertex3f(3.03f,-4.36+5,0);
-	glVertex3f(2.91f,-4.26+5,0);
-	glVertex3f(3.46f,-4.18+5,0);
-	glVertex3f(3.56f,-4.33+5,0);
-	glVertex3f(3.22f,-4.72+5,0);
-	glVertex3f(3.05f,-4.74+5,0);
-	glVertex3f(3.00f,-4.57+5,0);
+	glVertex3f(3.51f,-4.31f+5,0);
+	glVertex3f(3.03f,-4.36f+5,0);
+	glVertex3f(2.91f,-4.26f+5,0);
+	glVertex3f(3.46f,-4.18f+5,0);
+	glVertex3f(3.56f,-4.33f+5,0);
+	glVertex3f(3.22f,-4.72f+5,0);
+	glVertex3f(3.05f,-4.74f+5,0);
+	glVertex3f(3.00f,-4.57f+5,0);
 	glEnd();
 
 	glPopMatrix();
@@ -158,8 +214,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
-	 
-	
+
+
 	window = glfwCreateWindow(640, 480, "epic3d", NULL, NULL);
 
 	if (!window)
@@ -168,23 +224,26 @@ int _tmain(int argc, _TCHAR* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetWindowSizeCallback(window, update);
+	glfwSetWindowSizeCallback(window, update); // swag
+	glfwSetScrollCallback(window, radius_update);
 
 	glfwMakeContextCurrent(window);
 	//glfwSetKeyCallback(window, key_callback);
-	
+
 	update(window, 640, 480);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		drawGrid(window);
 		drawAxes(window);
 		drawMichael(window);
-		
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		angle_update(window);
 	}
+	glfwTerminate();
 	printf("end");
 }
 
