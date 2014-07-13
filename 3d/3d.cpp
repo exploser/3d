@@ -61,6 +61,8 @@ void angle_update(GLFWwindow* window)
 			glfwGetWindowSize(window, &width, &height);
 			update(window,width,height);
 		}
+	else
+		glfwGetCursorPos(window, &lastmX, &lastmY);
 }
 
 void drawAxes(GLFWwindow* window)
