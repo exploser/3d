@@ -9,7 +9,7 @@
 #include <gl\GLU.h>
 #include <math.h>
 
-double camT = -10; // more globals pls
+double camT = 10; // more globals pls
 double camP = 0;
 double camR = 14;
 
@@ -25,7 +25,7 @@ void update(GLFWwindow* window, int width, int height)
 	glViewport( 0, 0, width, height );
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45, ratio, 1, 300);
+	gluPerspective(45, ratio, 0.5, 300);
 	gluLookAt(camR * cos(camT) * cos(camP),camR * sin(camT),camR * cos(camT) * sin(camP),0,0,0,0,2,0);
 	//glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f); // orthographic cam sucks
 }
@@ -33,6 +33,8 @@ void update(GLFWwindow* window, int width, int height)
 void radius_update(GLFWwindow* window, double xamount, double yamount)
 {
 	camR -= yamount;
+	if(camR<1)
+		camR = 1;
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
 	update(window,width,height);
@@ -47,9 +49,14 @@ void angle_update(GLFWwindow* window)
 		{
 			glfwGetCursorPos(window, &mX, &mY);
 			camP -= (lastmX - mX)*0.01f;
-			camT += (lastmY - mY)*0.01f;
+			camT -= (lastmY - mY)*0.01f;
 			lastmX = mX;
 			lastmY = mY;
+			if(camT>20.21)
+				camT = 20.21;
+			if(camT<18)
+				camT = 18;
+			printf("%f\r\n", camT);
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 			update(window,width,height);
@@ -61,14 +68,21 @@ void drawAxes(GLFWwindow* window)
 
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
+	glLineWidth (2);
 	glLoadIdentity();
 	glBegin(GL_LINES); // draw axes
 	glColor3f (1, 0, 0);
 	glVertex3f(0,0,0); glVertex3f(1,0,0);
+	glVertex3f(1,0,0); glVertex3f(0.9,0.1,0);
+	glVertex3f(1,0,0); glVertex3f(0.9,-0.1,0);
 	glColor3f (0, 1, 0);
 	glVertex3f(0,0,0); glVertex3f(0,1,0);
+	glVertex3f(0,1,0); glVertex3f(0.1,0.9,0);
+	glVertex3f(0,1,0); glVertex3f(-0.1,0.9,0);
 	glColor3f (0, 0, 1);
 	glVertex3f(0,0,0); glVertex3f(0,0,1);
+	glVertex3f(0,0,1); glVertex3f(0,0.1,0.9);
+	glVertex3f(0,0,1); glVertex3f(0,-0.1,0.9);
 	glEnd();
 
 	glPopMatrix();
@@ -80,6 +94,7 @@ void drawGrid(GLFWwindow* window)
 
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
+	glLineWidth (1);
 	glLoadIdentity();
 	glBegin(GL_LINES); // draw axes
 	glColor4f (.5, .5, .5, .02);
@@ -138,71 +153,71 @@ void drawMichael(GLFWwindow* window)
 	glEnd();
 	glBegin(GL_TRIANGLE_FAN); // draw Michael's hat
 	glColor3f (.1f, .1f, .1f);
-	glVertex3f(5.92f,5,    0);
-	glVertex3f(2.42f,5,    0);
-	glVertex3f(2.42f,-0.55f+5,0);
-	glVertex3f(2.34f,-0.60f+5,0);
-	glVertex3f(2.28f,-0.77f+5,0);
-	glVertex3f(1.59f,-1+5,    0);
-	glVertex3f(1.12f,-1.26f+5,0);
-	glVertex3f(1.07f,-1.62f+5,0);
-	glVertex3f(1.42f,-1.82f+5,0);
-	glVertex3f(2.46f,-1.95+5,0); // where did the -f postfix go?
-	glVertex3f(3.42f,-1.99+5,0);
-	glVertex3f(4.26f,-1.98+5,0);
-	glVertex3f(4.35f,-2.91+5,0);
-	glVertex3f(5.20f,-3.77+5,0);
-	glVertex3f(5.90f,-4.06+5,0);
+	glVertex3f(5.92f,5,    0.01);
+	glVertex3f(2.42f,5,    0.01);
+	glVertex3f(2.42f,-0.55f+5,0.01);
+	glVertex3f(2.34f,-0.60f+5,0.01);
+	glVertex3f(2.28f,-0.77f+5,0.01);
+	glVertex3f(1.59f,-1+5,    0.01);
+	glVertex3f(1.12f,-1.26f+5,0.01);
+	glVertex3f(1.07f,-1.62f+5,0.01);
+	glVertex3f(1.42f,-1.82f+5,0.01);
+	glVertex3f(2.46f,-1.95+5,0.01); // where did the -f postfix go?
+	glVertex3f(3.42f,-1.99+5,0.01);
+	glVertex3f(4.26f,-1.98+5,0.01);
+	glVertex3f(4.35f,-2.91+5,0.01);
+	glVertex3f(5.20f,-3.77+5,0.01);
+	glVertex3f(5.90f,-4.06+5,0.01);
 	glEnd();
 
 	glBegin(GL_TRIANGLE_FAN); // draw Michael's glasses
 	glColor3f (.1f, .1f, .1f);
-	glVertex3f(3.09f,-2.81+5,0);
-	glVertex3f(2.97f,-2.50+5,0);
-	glVertex3f(2.73f,-2.37+5,0);
-	glVertex3f(2.66f,-2.55+5,0);
-	glVertex3f(2.85f,-3.33+5,0);
-	glVertex3f(3.09f,-3.59+5,0);
-	glVertex3f(3.22f,-3.53+5,0);
-	glVertex3f(3.16f,-3.05+5,0); // svali iz moix soröov naxyi
-	glVertex3f(3.11f,-2.89+5,0);
-	glVertex3f(4.42f,-2.46+5,0);
-	glVertex3f(4.41f,-2.41+5,0);
+	glVertex3f(3.09f,-2.81+5,0.01);
+	glVertex3f(2.97f,-2.50+5,0.01);
+	glVertex3f(2.73f,-2.37+5,0.01);
+	glVertex3f(2.66f,-2.55+5,0.01);
+	glVertex3f(2.85f,-3.33+5,0.01);
+	glVertex3f(3.09f,-3.59+5,0.01);
+	glVertex3f(3.22f,-3.53+5,0.01);
+	glVertex3f(3.16f,-3.05+5,0.01); // svali iz moix soröov naxyi
+	glVertex3f(3.11f,-2.89+5,0.01);
+	glVertex3f(4.42f,-2.46+5,0.01);
+	glVertex3f(4.41f,-2.41+5,0.01);
 	glEnd();
 
 	glBegin(GL_LINE_STRIP); // eyelid
 	glColor3f (.1f, .1f, .1f);
-	glVertex3f(3.04f,-3.07+5,0);
-	glVertex3f(3.14f,-2.94+5,0);
-	glVertex3f(3.27f,-2.90+5,0);
-	glVertex3f(3.46f,-2.93+5,0);
-	glVertex3f(3.56f,-2.89+5,0);
-	glVertex3f(3.43f,-3.05+5,0);
-	glVertex3f(3.32f,-3.08+5,0);
-	glVertex3f(3.20f,-3.07+5,0);
-	glVertex3f(3.12f,-3.08+5,0);
+	glVertex3f(3.04f,-3.07+5,0.01);
+	glVertex3f(3.14f,-2.94+5,0.01);
+	glVertex3f(3.27f,-2.90+5,0.01);
+	glVertex3f(3.46f,-2.93+5,0.01);
+	glVertex3f(3.56f,-2.89+5,0.01);
+	glVertex3f(3.43f,-3.05+5,0.01);
+	glVertex3f(3.32f,-3.08+5,0.01);
+	glVertex3f(3.20f,-3.07+5,0.01);
+	glVertex3f(3.12f,-3.08+5,0.01);
 	glEnd();
 
 	glBegin(GL_TRIANGLE_FAN); // eye
 	glColor3f (.1f, .1f, .1f);
-	glVertex3f(3.25f,-2.90+5,0);
-	glVertex3f(3.31f,-2.97+5,0);
-	glVertex3f(3.31f,-3.08+5,0);
-	glVertex3f(3.18f,-3.06+5,0);
-	glVertex3f(3.15f,-3.01+5,0);
-	glVertex3f(3.16f,-2.92+5,0);
+	glVertex3f(3.25f,-2.90+5,0.01);
+	glVertex3f(3.31f,-2.97+5,0.01);
+	glVertex3f(3.31f,-3.08+5,0.01);
+	glVertex3f(3.18f,-3.06+5,0.01);
+	glVertex3f(3.15f,-3.01+5,0.01);
+	glVertex3f(3.16f,-2.92+5,0.01);
 	glEnd();
 
 	glBegin(GL_TRIANGLE_FAN); // lips
 	glColor3f(0.8823, 0.702, 0.745);
-	glVertex3f(3.51f,-4.31f+5,0);
-	glVertex3f(3.03f,-4.36f+5,0);
-	glVertex3f(2.91f,-4.26f+5,0);
-	glVertex3f(3.46f,-4.18f+5,0);
-	glVertex3f(3.56f,-4.33f+5,0);
-	glVertex3f(3.22f,-4.72f+5,0);
-	glVertex3f(3.05f,-4.74f+5,0);
-	glVertex3f(3.00f,-4.57f+5,0);
+	glVertex3f(3.51f,-4.31f+5,0.01);
+	glVertex3f(3.03f,-4.36f+5,0.01);
+	glVertex3f(2.91f,-4.26f+5,0.01);
+	glVertex3f(3.46f,-4.18f+5,0.01);
+	glVertex3f(3.56f,-4.33f+5,0.01);
+	glVertex3f(3.22f,-4.72f+5,0.01);
+	glVertex3f(3.05f,-4.74f+5,0.01);
+	glVertex3f(3.00f,-4.57f+5,0.01);
 	glEnd();
 
 	glPopMatrix();
@@ -237,6 +252,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glDepthFunc(GL_LESS);glEnable(GL_DEPTH_TEST);
 		drawGrid(window);
 		drawAxes(window);
 		drawMichael(window);
